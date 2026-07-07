@@ -27,7 +27,7 @@ Usage:
 import json
 import sqlite3
 from datetime import datetime, timezone
-from typing import Any
+from typing import Any, Optional
 
 from chatbot_router import QueryType, RoutedQuery
 from context_layer import fetch_applicant_card, search_applicants, get_grade_distribution
@@ -101,7 +101,7 @@ _RISK_THRESHOLDS = {
 # STEP 3 — CONTEXT FETCHER
 # ─────────────────────────────────────────────────────────────────────────────
 
-def fetch_applicant_context(db_path: str, applicant_id: str) -> dict | None:
+def fetch_applicant_context(db_path: str, applicant_id: str) -> Optional[dict]:
     """
     Retrieve a frozen, LLM-ready applicant card from SQLite.
 
@@ -322,7 +322,7 @@ LOAN OFFER:
 # TEMPLATE 1: LOOKUP
 # ─────────────────────────────────────────────────────────────────────────────
 
-def _build_lookup_prompt(ctx: dict, raw_message: str, parameters: dict | None = None) -> tuple[str, str]:
+def _build_lookup_prompt(ctx: dict, raw_message: str, parameters: Optional[dict] = None) -> tuple[str, str]:
     fields = (parameters or {}).get("fields", [])
 
     if fields:

@@ -6,6 +6,8 @@ Three rule types in strict priority order:
 Returns None if no rule fires - send to ML model.
 """
 
+from typing import Optional
+
 # ── Threshold constants with documented sources ──────────
 # Sources:
 #   RBI Master Direction - NBFC Systemically Important
@@ -69,7 +71,7 @@ T_FAMILY_BURDEN_HIGH     = 0.50  # >50% children/family = high obligation ratio
 T_CONTACT_POOR           = 1     # contactability_score <= 1 = hard to verify
 
 
-def apply_pre_layer(features: dict) -> tuple | None:
+def apply_pre_layer(features: dict) -> Optional[tuple]:
     # ── TYPE 1: HARD REJECTION ──
 
     # Seasonal business protection — must check BEFORE GST variance rejection

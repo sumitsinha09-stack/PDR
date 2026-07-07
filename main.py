@@ -27,7 +27,7 @@ class ScoreRequest(BaseModel):
 
 class AAScoreRequest(BaseModel):
     user_id: str
-    consent_id: str | None = None
+    consent_id: Optional[str] = None
 
 class SetuConsentRequest(BaseModel):
     phone_number: str
@@ -120,7 +120,7 @@ def load_demo_users() -> list:
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Failed to read demo_users.json: {e}")
 
-def find_user(user_id: str) -> dict | None:
+def find_user(user_id: str) -> Optional[dict]:
     return next(
         (u for u in load_demo_users() if u['user_id'] == user_id),
         None

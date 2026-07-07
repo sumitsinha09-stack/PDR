@@ -14,6 +14,7 @@ Each query type gets its own layout:
 """
 
 from chatbot_router import QueryType
+from typing import Optional
 
 _W = 57
 _THICK = "=" * _W
@@ -133,8 +134,8 @@ def _red_flags_block(ctx: dict) -> str:
 def format_response(
     query_type,
     llm_output: str,
-    ctx: dict | None = None,
-    ctx_b: dict | None = None,
+    ctx: Optional[dict] = None,
+    ctx_b: Optional[dict] = None,
 ) -> str:
     """
     Wrap LLM output in structured, human-readable display for the loan officer.
@@ -172,7 +173,7 @@ def format_response(
 # PER-TYPE FORMATTERS
 # ─────────────────────────────────────────────────────────────────────────────
 
-def _fmt_lookup(llm_output: str, ctx: dict | None) -> str:
+def _fmt_lookup(llm_output: str, ctx: Optional[dict]) -> str:
     if not ctx:
         return f"\n{llm_output.strip()}\n"
 
@@ -190,7 +191,7 @@ def _fmt_lookup(llm_output: str, ctx: dict | None) -> str:
     return "\n".join(parts)
 
 
-def _fmt_explanation(llm_output: str, ctx: dict | None) -> str:
+def _fmt_explanation(llm_output: str, ctx: Optional[dict]) -> str:
     if not ctx:
         return f"\n{llm_output.strip()}\n"
 
@@ -245,7 +246,7 @@ def _fmt_explanation(llm_output: str, ctx: dict | None) -> str:
 
 
 def _fmt_comparison(
-    llm_output: str, ctx_a: dict | None, ctx_b: dict | None
+    llm_output: str, ctx_a: Optional[dict], ctx_b: Optional[dict]
 ) -> str:
     parts = [_header("  APPLICANT COMPARISON")]
 
@@ -271,7 +272,7 @@ def _fmt_comparison(
     return "\n".join(parts)
 
 
-def _fmt_letter(llm_output: str, ctx: dict | None) -> str:
+def _fmt_letter(llm_output: str, ctx: Optional[dict]) -> str:
     parts = [_header("  FORMAL CREDIT DECISION LETTER")]
     parts.append("")
     parts.append(llm_output.strip())
@@ -280,7 +281,7 @@ def _fmt_letter(llm_output: str, ctx: dict | None) -> str:
     return "\n".join(parts)
 
 
-def _fmt_scenario(llm_output: str, ctx: dict | None) -> str:
+def _fmt_scenario(llm_output: str, ctx: Optional[dict]) -> str:
     parts = [_header("  SCENARIO ANALYSIS")]
     if ctx:
         parts.append(_applicant_block(ctx))
@@ -289,7 +290,7 @@ def _fmt_scenario(llm_output: str, ctx: dict | None) -> str:
     return "\n".join(parts)
 
 
-def _fmt_risk_assessment(llm_output: str, ctx: dict | None) -> str:
+def _fmt_risk_assessment(llm_output: str, ctx: Optional[dict]) -> str:
     parts = [_header("  RISK ASSESSMENT")]
     if ctx:
         parts.append(_applicant_block(ctx))
