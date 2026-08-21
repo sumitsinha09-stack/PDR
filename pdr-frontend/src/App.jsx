@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { Routes, Route, useLocation } from 'react-router-dom'
 import { AnimatePresence, motion } from 'framer-motion'
 import axios from 'axios'
@@ -152,16 +152,12 @@ function DemoFlow() {
   )
 }
 
-// Placeholder docs page
+// Docs redirect
 function DocsPage() {
-  return (
-    <div className="min-h-screen bg-surface flex items-center justify-center">
-      <div className="text-center">
-        <h1 className="text-4xl font-headline font-bold text-slate-900 dark:text-white mb-4">Documentation</h1>
-        <p className="text-on-surface-variant dark:text-slate-400 text-lg">Coming soon.</p>
-      </div>
-    </div>
-  )
+  useEffect(() => {
+    window.location.href = "https://github.com/sumitsinha09-stack/PDR.git"
+  }, [])
+  return null
 }
 
 function App() {

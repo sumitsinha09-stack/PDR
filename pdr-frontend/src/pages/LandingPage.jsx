@@ -35,7 +35,7 @@ function LandingPage() {
           <div className="hidden md:flex items-center gap-x-6 lg:gap-x-8">
             <a className="text-slate-900 dark:text-white font-semibold border-b-2 border-slate-900 dark:border-slate-50 pb-1 hover:text-slate-900 dark:text-white dark:hover:text-white transition-all duration-300" href="#problem-statement">About Us</a>
             <Link to="/solutions" className="text-slate-500 dark:text-slate-400 font-medium hover:text-slate-900 dark:text-white dark:hover:text-white transition-all duration-300">Solutions</Link>
-            <a className="text-slate-500 dark:text-slate-400 font-medium hover:text-slate-900 dark:text-white dark:hover:text-white transition-all duration-300" href="https://github.com/lubdhak123/pdr_2" target="_blank" rel="noopener noreferrer">Documentation</a>
+            <a className="text-slate-500 dark:text-slate-400 font-medium hover:text-slate-900 dark:text-white dark:hover:text-white transition-all duration-300" href="https://github.com/sumitsinha09-stack/PDR.git" target="_blank" rel="noopener noreferrer">Documentation</a>
           </div>
           <div className="flex items-center gap-3">
             <ThemeToggle />
@@ -71,7 +71,7 @@ function LandingPage() {
                 <Link to="/demo" className="gradient-cta text-white px-8 py-4 rounded-lg text-lg font-bold flex items-center gap-2 shadow-lg shadow-tertiary/20 active:scale-95 transition-transform">
                   Access Risk Scoring →
                 </Link>
-                <a href="https://github.com/lubdhak123/pdr_2" target="_blank" rel="noopener noreferrer" className="bg-transparent text-on-surface dark:text-slate-200 px-8 py-4 rounded-lg text-lg font-bold ghost-border active:scale-95 transition-transform">
+                <a href="https://github.com/sumitsinha09-stack/PDR.git" target="_blank" rel="noopener noreferrer" className="bg-transparent text-on-surface dark:text-slate-200 px-8 py-4 rounded-lg text-lg font-bold ghost-border active:scale-95 transition-transform">
                   Documentation
                 </a>
               </div>

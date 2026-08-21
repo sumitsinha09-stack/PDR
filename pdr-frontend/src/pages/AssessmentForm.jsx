@@ -405,7 +405,7 @@ function AssessmentForm() {
             <a className="text-slate-900 dark:text-white font-semibold border-b-2 border-slate-900 dark:border-white pb-1 hover:text-slate-900 dark:text-white dark:hover:text-white transition-all duration-300" href="#">Solutions</a>
             <a className="text-slate-500 dark:text-slate-400 font-medium hover:text-slate-900 dark:text-white dark:hover:text-white transition-all duration-300" href="#">Trust Pipeline</a>
             <a className="text-slate-500 dark:text-slate-400 font-medium hover:text-slate-900 dark:text-white dark:hover:text-white transition-all duration-300" href="#">Compliance</a>
-            <a className="text-slate-500 dark:text-slate-400 font-medium hover:text-slate-900 dark:text-white dark:hover:text-white transition-all duration-300" href="https://github.com/lubdhak123/pdr_2" target="_blank" rel="noopener noreferrer">Documentation</a>
+            <a className="text-slate-500 dark:text-slate-400 font-medium hover:text-slate-900 dark:text-white dark:hover:text-white transition-all duration-300" href="https://github.com/sumitsinha09-stack/PDR.git" target="_blank" rel="noopener noreferrer">Documentation</a>
           </div>
           <div className="flex items-center gap-4">
             <ThemeToggle />

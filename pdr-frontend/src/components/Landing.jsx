@@ -13,7 +13,7 @@ function Landing({ onStart }) {
             <a className="text-slate-900 dark:text-white font-semibold border-b-2 border-slate-900 dark:border-slate-50 pb-1 hover:text-slate-900 dark:text-white dark:hover:text-white transition-all duration-300" href="#">Solutions</a>
             <a className="text-slate-500 dark:text-slate-400 font-medium hover:text-slate-900 dark:text-white dark:hover:text-white transition-all duration-300" href="#">Trust Pipeline</a>
             <a className="text-slate-500 dark:text-slate-400 font-medium hover:text-slate-900 dark:text-white dark:hover:text-white transition-all duration-300" href="#">Compliance</a>
-            <a className="text-slate-500 dark:text-slate-400 font-medium hover:text-slate-900 dark:text-white dark:hover:text-white transition-all duration-300" href="#">Documentation</a>
+            <a className="text-slate-500 dark:text-slate-400 font-medium hover:text-slate-900 dark:text-white dark:hover:text-white transition-all duration-300" href="https://github.com/sumitsinha09-stack/PDR.git" target="_blank" rel="noopener noreferrer">Documentation</a>
           </div>
           <div className="flex items-center gap-4">
             <button className="text-[#565e74] dark:text-slate-300 font-medium hover:text-slate-900 dark:text-white dark:hover:text-white transition-all duration-300 active:scale-95">Login</button>
@@ -41,7 +41,7 @@ function Landing({ onStart }) {
                   View Demo Profiles
                   <span className="material-symbols-outlined">arrow_forward</span>
                 </button>
-                <a href="https://github.com/lubdhak123/pdr_2" target="_blank" rel="noopener noreferrer" className="bg-surface-container-high text-on-surface dark:text-slate-200 px-8 py-4 rounded-lg text-lg font-bold ghost-border active:scale-95 transition-transform text-center inline-block">
+                <a href="https://github.com/sumitsinha09-stack/PDR.git" target="_blank" rel="noopener noreferrer" className="bg-surface-container-high text-on-surface dark:text-slate-200 px-8 py-4 rounded-lg text-lg font-bold ghost-border active:scale-95 transition-transform text-center inline-block">
                   Documentation
                 </a>
               </div>
