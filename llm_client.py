@@ -310,7 +310,52 @@ def _generate_fallback(system_prompt: str, user_prompt: str, query_type: str = "
         )
 
 
+def _call_bedrock(system_prompt: str, user_prompt: str, max_tokens: int = 300) -> Optional[str]:
+    """Invoke Amazon Bedrock foundation model if AWS environment is present."""
+    if not (os.getenv("AWS_REGION") or os.getenv("AWS_DEFAULT_REGION") or os.getenv("ENABLE_BEDROCK")):
+        return None
+    try:
+        import boto3
+        import json
+
+        region = os.getenv("AWS_REGION") or os.getenv("AWS_DEFAULT_REGION", "us-east-1")
+        model_id = os.getenv("BEDROCK_MODEL_ID", "anthropic.claude-3-haiku-20240307-v1:0")
+        client = boto3.client("bedrock-runtime", region_name=region)
+
+        if "anthropic" in model_id:
+            payload = {
+                "anthropic_version": "bedrock-2023-05-31",
+                "max_tokens": max_tokens,
+                "system": system_prompt,
+                "messages": [{"role": "user", "content": user_prompt}],
+                "temperature": 0.1,
+            }
+            res = client.invoke_model(modelId=model_id, body=json.dumps(payload))
+            res_body = json.loads(res["body"].read())
+            return res_body["content"][0]["text"]
+        elif "mistral" in model_id:
+            prompt = f"<s>[INST] {system_prompt}\n\n{user_prompt} [/INST]"
+            payload = {
+                "prompt": prompt,
+                "max_tokens": max_tokens,
+                "temperature": 0.1,
+            }
+            res = client.invoke_model(modelId=model_id, body=json.dumps(payload))
+            res_body = json.loads(res["body"].read())
+            return res_body["outputs"][0]["text"]
+    except Exception as e:
+        print(f"[BEDROCK NOTICE] Fallback triggered ({e})")
+        return None
+    return None
+
+
 def _generate(system_prompt: str, user_prompt: str, num_predict: int = 60, query_type: str = "LOOKUP") -> str:
+    # 1. Check for Amazon Bedrock in AWS cloud environment
+    bedrock_response = _call_bedrock(system_prompt, user_prompt, max_tokens=num_predict)
+    if bedrock_response:
+        return bedrock_response
+
+    # 2. Try Local Ollama if available
     try:
         response = requests.post(
             OLLAMA_URL,
@@ -329,7 +374,7 @@ def _generate(system_prompt: str, user_prompt: str, num_predict: int = 60, query
         response.raise_for_status()
         return response.json()["response"]
     except (requests.exceptions.ConnectionError, requests.exceptions.Timeout, requests.exceptions.RequestException, Exception):
-        # Graceful fallback to deterministic intelligent credit analyst
+        # 3. Graceful fallback to deterministic intelligent credit analyst
         return _generate_fallback(system_prompt, user_prompt, query_type)
 
 

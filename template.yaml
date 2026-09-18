@@ -1,0 +1,133 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+Description: PDR (Paisa Do Re) - Cloud Infrastructure Stack for AWS Track 2 ("SHIP IT")
+
+Parameters:
+  EnvironmentName:
+    Type: String
+    Default: prod
+    Description: Deployment environment name (e.g., prod, dev)
+
+Resources:
+  # ─────────────────────────────────────────────────────────────
+  # DATA & STORAGE: S3 Bucket for Statements and Decision Reports
+  # ─────────────────────────────────────────────────────────────
+  PDRStorageBucket:
+    Type: AWS::S3::Bucket
+    Properties:
+      BucketName: !Sub 'pdr-credit-storage-${AWS::AccountId}-${AWS::Region}'
+      PublicAccessBlockConfiguration:
+        BlockPublicAcls: true
+        BlockPublicPolicy: true
+        IgnorePublicAcls: true
+        RestrictPublicBuckets: true
+      CorsConfiguration:
+        CorsRules:
+          - AllowedHeaders: ['*']
+            AllowedMethods: [GET, PUT, POST]
+            AllowedOrigins: ['*']
+            MaxAge: 3600
+
+  # ─────────────────────────────────────────────────────────────
+  # DATA: DynamoDB Table for Applicant Cards & Audit Trails
+  # ─────────────────────────────────────────────────────────────
+  PDRDynamoDBTable:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      TableName: !Sub 'PDR_Applicants_${EnvironmentName}'
+      BillingMode: PAY_PER_REQUEST
+      AttributeDefinitions:
+        - AttributeName: applicant_id
+          AttributeType: S
+      KeySchema:
+        - AttributeName: applicant_id
+          KeyType: HASH
+
+  # ─────────────────────────────────────────────────────────────
+  # AUTH & POLICY: Cognito User Pool for Loan Officers
+  # ─────────────────────────────────────────────────────────────
+  PDRCognitoUserPool:
+    Type: AWS::Cognito::UserPool
+    Properties:
+      UserPoolName: !Sub 'pdr-loan-officers-${EnvironmentName}'
+      AutoVerifiedAttributes:
+        - email
+      UsernameAttributes:
+        - email
+
+  PDRCognitoClient:
+    Type: AWS::Cognito::UserPoolClient
+    Properties:
+      ClientName: pdr-web-client
+      UserPoolId: !Ref PDRCognitoUserPool
+      GenerateSecret: false
+      ExplicitAuthFlows:
+        - ALLOW_USER_SRP_AUTH
+        - ALLOW_REFRESH_TOKEN_AUTH
+        - ALLOW_USER_PASSWORD_AUTH
+
+  # ─────────────────────────────────────────────────────────────
+  # NOTIFICATIONS & ALERTS: SNS Topic for High-Risk Fraud Alerts
+  # ─────────────────────────────────────────────────────────────
+  PDRFraudAlertsTopic:
+    Type: AWS::SNS::Topic
+    Properties:
+      TopicName: !Sub 'pdr-fraud-alerts-${EnvironmentName}'
+
+  # ─────────────────────────────────────────────────────────────
+  # IAM ROLE: App Runner Instance Role with S3, DynamoDB, Bedrock
+  # ─────────────────────────────────────────────────────────────
+  PDRAppRunnerInstanceRole:
+    Type: AWS::IAM::Role
+    Properties:
+      RoleName: !Sub 'pdr-apprunner-instance-role-${EnvironmentName}'
+      AssumeRolePolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service: tasks.apprunner.amazonaws.com
+            Action: sts:AssumeRole
+      Policies:
+        - PolicyName: PDRAccessPolicy
+          PolicyDocument:
+            Version: '2012-10-17'
+            Statement:
+              - Effect: Allow
+                Action:
+                  - dynamodb:PutItem
+                  - dynamodb:GetItem
+                  - dynamodb:UpdateItem
+                  - dynamodb:Query
+                  - dynamodb:Scan
+                Resource: !GetAtt PDRDynamoDBTable.Arn
+              - Effect: Allow
+                Action:
+                  - s3:PutObject
+                  - s3:GetObject
+                Resource: !Sub '${PDRStorageBucket.Arn}/*'
+              - Effect: Allow
+                Action:
+                  - bedrock:InvokeModel
+                Resource: '*'
+              - Effect: Allow
+                Action:
+                  - sns:Publish
+                Resource: !Ref PDRFraudAlertsTopic
+
+Outputs:
+  StorageBucketName:
+    Description: Name of S3 storage bucket
+    Value: !Ref PDRStorageBucket
+  DynamoDBTableName:
+    Description: Name of DynamoDB table
+    Value: !Ref PDRDynamoDBTable
+  CognitoUserPoolId:
+    Description: Cognito User Pool ID
+    Value: !Ref PDRCognitoUserPool
+  CognitoClientId:
+    Description: Cognito Client App ID
+    Value: !Ref PDRCognitoClient
+  FraudAlertsTopicArn:
+    Description: SNS Topic ARN for Fraud alerts
+    Value: !Ref PDRFraudAlertsTopic

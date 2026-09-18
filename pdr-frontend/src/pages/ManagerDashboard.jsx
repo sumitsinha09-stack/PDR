@@ -3,8 +3,7 @@ import axios from 'axios';
 import { motion, AnimatePresence } from 'framer-motion';
 import { CheckCircle, XCircle, Clock, Search, ArrowLeft, Users, MessageSquare, ChevronRight, FileText } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
-
-const BACKEND_URL = 'http://localhost:8000';
+import { BACKEND_URL } from '../config';
 
 export default function ManagerDashboard() {
   const [applicants, setApplicants] = useState([]);

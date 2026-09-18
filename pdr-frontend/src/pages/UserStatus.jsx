@@ -6,8 +6,7 @@ import { useNavigate } from 'react-router-dom';
 import { signInWithPopup, signOut, onAuthStateChanged } from 'firebase/auth';
 import { auth, googleProvider } from '../firebase';
 import StarField from '../components/StarField';
-
-const BACKEND_URL = 'http://localhost:8000';
+import { BACKEND_URL } from '../config';
 
 export default function UserStatus() {
   const [user, setUser] = useState(null);

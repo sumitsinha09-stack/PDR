@@ -1,7 +1,6 @@
 import { useState, useEffect, useRef } from 'react'
 import axios from 'axios'
-
-const BACKEND = 'http://localhost:8000'
+import { BACKEND_URL as BACKEND } from '../config'
 
 export default function ChatPanel({ applicantId, applicantName, decision, isDark = false }) {
   const [messages, setMessages]       = useState([])

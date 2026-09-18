@@ -1,0 +1,17 @@
+version: 1
+frontend:
+  phases:
+    preBuild:
+      commands:
+        - cd pdr-frontend
+        - npm ci
+    build:
+      commands:
+        - npm run build
+  artifacts:
+    baseDirectory: pdr-frontend/dist
+    files:
+      - '**/*'
+  cache:
+    paths:
+      - pdr-frontend/node_modules/**/*

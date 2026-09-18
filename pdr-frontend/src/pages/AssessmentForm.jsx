@@ -7,6 +7,7 @@ import demoData from '../../../demo_users.json';
 import ThemeToggle from '../components/ThemeToggle';
 import StarField from '../components/StarField';
 import NavUser from '../components/NavUser';
+import { BACKEND_URL as BACKEND } from '../config';
 
 // Maps demo_users.json form_fields (snake_case) → React NTC state keys (camelCase)
 const NTC_FIELD_MAP = {
@@ -196,8 +197,6 @@ function AssessmentForm() {
   const updateNtc = (field, value) => {
     setNtcData(prev => ({ ...prev, [field]: value }));
   };
-
-  const BACKEND = 'http://localhost:8000';
 
   // ── Profile builders: map form state → backend user_profile dict ──────────
 

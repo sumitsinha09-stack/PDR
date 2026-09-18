@@ -1,7 +1,6 @@
 import { useState, useEffect, useRef } from 'react'
 import axios from 'axios'
-
-const BACKEND = 'http://localhost:8000'
+import { BACKEND_URL as BACKEND } from '../config'
 
 // ── Floating global chat button + modal ──────────────────────────────────────
 // No auto-inject. Loan officer types full queries for cross-applicant work:

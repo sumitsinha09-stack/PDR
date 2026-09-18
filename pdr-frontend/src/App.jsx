@@ -15,6 +15,7 @@ import ManagerPortal from './pages/ManagerPortal'
 import ManagerDashboard from './pages/ManagerDashboard'
 import UserStatus from './pages/UserStatus'
 import demoData from '../../demo_users.json'
+import { BACKEND_URL as BACKEND_BASE_URL } from './config'
 
 // Animated page wrapper for cinematic transitions
 function PageTransition({ children, variant = 'default' }) {
@@ -41,8 +42,6 @@ function DemoFlow() {
   const [flowStep, setFlowStep] = useState('')
   const [selectedUser, setSelectedUser] = useState(null)
   const [hasFetchedUsers, setHasFetchedUsers] = useState(false)
-
-  const BACKEND_BASE_URL = 'http://localhost:8000'
 
   async function scoreUser(userId) {
     const user = demoData.demo_users.find(u => u.user_id === userId) || null

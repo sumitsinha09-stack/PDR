@@ -21,3 +21,7 @@ datasets.zip
 node_modules/
 dist/
 build/
+*.db-shm
+*.db-wal
+uploads/
+*.pdf

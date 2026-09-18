@@ -71,13 +71,27 @@ def save_applicant_card(db_path, scoring_result, applicant_id, name='', city='',
         row = conn.execute('SELECT id FROM applicant_cards WHERE applicant_id=?', (applicant_id,)).fetchone()
         card_id = row['id'] if row else -1
     log.info('Saved applicant card id=%d for %s', card_id, applicant_id)
+    try:
+        from dynamodb_handler import save_to_dynamodb
+        save_to_dynamodb(scoring_result, applicant_id, name=name, city=city, business_type=business_type)
+    except Exception:
+        pass
     return card_id
 
 def fetch_applicant_card(db_path, applicant_id):
     _validate_applicant_id(applicant_id)
     with _connect(db_path) as conn:
         card_row = conn.execute('SELECT * FROM applicant_cards WHERE applicant_id=? AND is_deleted=0', (applicant_id,)).fetchone()
-        if card_row is None: log.warning('Applicant not found: %s', applicant_id); return None
+        if card_row is None:
+            try:
+                from dynamodb_handler import fetch_from_dynamodb
+                dyn_item = fetch_from_dynamodb(applicant_id)
+                if dyn_item:
+                    return dyn_item
+            except Exception:
+                pass
+            log.warning('Applicant not found: %s', applicant_id)
+            return None
         offer_row = conn.execute('SELECT * FROM applicant_loan_offers WHERE applicant_id=?', (applicant_id,)).fetchone()
         shap_rows = conn.execute('SELECT rank,feature,reason,shap_value,direction,impact FROM applicant_shap_explanations WHERE applicant_id=? ORDER BY rank', (applicant_id,)).fetchall()
         feat_rows = conn.execute('SELECT feature_name,feature_value FROM applicant_features WHERE applicant_id=?', (applicant_id,)).fetchall()
