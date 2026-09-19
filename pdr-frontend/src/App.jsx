@@ -154,7 +154,7 @@ function DemoFlow() {
 // Docs redirect
 function DocsPage() {
   useEffect(() => {
-    window.location.href = "https://github.com/sumitsinha09-stack/PDR.git"
+    window.location.href = "https://github.com/sumitsinha09-stack/PDR-publishing"
   }, [])
   return null
 }

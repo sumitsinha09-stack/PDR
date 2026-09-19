@@ -28,7 +28,7 @@ EXPOSE 8000
 
 # Health check to verify the container is active and models are loaded
 HEALTHCHECK --interval=30s --timeout=10s --start-period=10s --retries=3 \
-    CMD curl -f http://localhost:${PORT}/health || exit 1
+    CMD curl -f http://localhost:${PORT:-8000}/health || exit 1
 
-# Start FastAPI server using uvicorn
-CMD exec uvicorn main:app --host 0.0.0.0 --port ${PORT}
+# Start FastAPI server using uvicorn binding to 0.0.0.0 and PORT
+CMD ["sh", "-c", "exec uvicorn main:app --host 0.0.0.0 --port ${PORT:-8000}"]

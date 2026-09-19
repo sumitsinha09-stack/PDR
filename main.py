@@ -249,6 +249,15 @@ def declined_endpoint(req: DeclinedRequest):
         raise HTTPException(status_code=500, detail=str(e))
 
 
+@app.get('/')
+def root_endpoint():
+    return {
+        'status':       'ok',
+        'service':      'PDR Credit Scoring API',
+        'version':      '2.0.0',
+        'health':       '/health'
+    }
+
 @app.get('/health')
 def health_endpoint():
     return {
@@ -638,4 +647,4 @@ def get_user_status(applicant_id: str):
 
 if __name__ == '__main__':
     port = int(os.environ.get('PORT', 8000))
-    uvicorn.run('main:app', host='0.0.0.0', port=port, reload=True)
+    uvicorn.run('main:app', host='0.0.0.0', port=port, reload=False)
