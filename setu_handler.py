@@ -28,6 +28,8 @@ class SetuAAHandler:
     # ─────────────────────────────────────────
 
     def _get_token(self) -> str:
+        if not self.client_id or not self.client_secret:
+            raise ValueError("Setu client_id or client_secret not configured. Set SETU_CLIENT_ID and SETU_CLIENT_SECRET environment variables.")
         now = time.time()
         if self._token and now < self._token_expiry - 60:
             return self._token

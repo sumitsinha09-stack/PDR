@@ -92,11 +92,32 @@ def seed_chatbot_db():
     except Exception as e:
         print(f"[STARTUP WARN] Could not seed chatbot DB: {e}")
 
+# Configure CORS: production origins via FRONTEND_URL env var + local development origins
+base_origins = [
+    "http://localhost:5173",
+    "http://localhost:3000",
+    "http://localhost:8000",
+    "http://127.0.0.1:5173",
+    "http://127.0.0.1:3000",
+    "http://127.0.0.1:8000",
+]
+
+frontend_env = os.environ.get("FRONTEND_URL", "").strip()
+if frontend_env == "*":
+    allowed_origins = ["*"]
+elif frontend_env:
+    custom_origins = [origin.strip().rstrip("/") for origin in frontend_env.split(",") if origin.strip()]
+    allowed_origins = list(dict.fromkeys(base_origins + custom_origins))
+else:
+    allowed_origins = base_origins
+
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=['*'],
-    allow_methods=['*'],
-    allow_headers=['*']
+    allow_origins=allowed_origins,
+    allow_origin_regex=r"^https:\/\/([a-zA-Z0-9-]+\.)?amplifyapp\.com$",
+    allow_credentials=True if allowed_origins != ["*"] else False,
+    allow_methods=["*"],
+    allow_headers=["*"],
 )
 
 # ─────────────────────────────────────────────
@@ -104,9 +125,9 @@ app.add_middleware(
 # ─────────────────────────────────────────────
 
 setu = SetuAAHandler(
-    client_id     = os.environ.get("SETU_CLIENT_ID",     "5cd97a89-ad5d-41a6-91b6-07887d7dc6e0"),
-    client_secret = os.environ.get("SETU_CLIENT_SECRET", "MVUbfZP217ZSgDhKfNbtw1NuPCTRgq0t"),
-    product_id    = os.environ.get("SETU_PRODUCT_ID",    "50854c6e-589c-43cb-bdb7-a276cd56086c"),
+    client_id     = os.environ.get("SETU_CLIENT_ID", ""),
+    client_secret = os.environ.get("SETU_CLIENT_SECRET", ""),
+    product_id    = os.environ.get("SETU_PRODUCT_ID", ""),
 )
 
 # ─────────────────────────────────────────────

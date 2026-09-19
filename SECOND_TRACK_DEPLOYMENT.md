@@ -1,26 +1,12 @@
-# AWS "Ship It" Deployment Guide: PDR Platform
+# [DEPRECATED / ARCHIVED] AWS App Runner Deployment Guide
 
-This guide provides end-to-end instructions for deploying PDR with a public frontend URL and backend API URL on AWS.
-
-```
-                  ┌───────────────────────────────┐
-                  │      AWS Amplify Hosting       │
-                  │   React/Vite Frontend (SPA)   │
-                  └───────────────┬───────────────┘
-                                  │ HTTPS (VITE_BACKEND_URL)
-                                  ▼
-                  ┌───────────────────────────────┐
-                  │        AWS App Runner         │
-                  │   FastAPI Backend (Port 8000) │
-                  └───────────────┬───────────────┘
-                                  │
-         ┌────────────────────────┼────────────────────────┐
-         ▼                        ▼                        ▼
-┌─────────────────┐      ┌─────────────────┐      ┌─────────────────┐
-│ ML Models (PKL) │      │ Amazon DynamoDB │      │    Amazon S3    │
-│  NTC & MSME     │      │ (Applicant DB)  │      │ (Report Storage)│
-└─────────────────┘      └─────────────────┘      └─────────────────┘
-```
+> ⚠️ **ARCHIVE NOTICE**: This document describes an obsolete App Runner deployment option.
+> **DO NOT USE AWS APP RUNNER.** The backend is ALREADY deployed and running on **AWS ECS Fargate** behind an **Application Load Balancer (ALB)** in `eu-north-1`:
+> - Backend ALB: `http://pdr-backend-alb-665520673.eu-north-1.elb.amazonaws.com`
+> - Cluster: `pdr-cluster`
+> - ECR Repository: `454538763595.dkr.ecr.eu-north-1.amazonaws.com/pdr-backend`
+> 
+> Production Frontend is hosted on **AWS Amplify**.
 
 ---
 
