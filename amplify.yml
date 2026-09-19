@@ -3,10 +3,10 @@ frontend:
   phases:
     preBuild:
       commands:
-        - cd pdr-frontend && npm install
+        - npm --prefix pdr-frontend install
     build:
       commands:
-        - cd pdr-frontend && npm run build
+        - npm --prefix pdr-frontend run build
   artifacts:
     baseDirectory: pdr-frontend/dist
     files:
