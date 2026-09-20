@@ -1,7 +1,18 @@
 <!DOCTYPE html>
-<html class="light scroll-smooth" lang="en">
+<html class="dark scroll-smooth" lang="en">
   <head>
     <meta charset="UTF-8" />
+    <script>
+      (function() {
+        try {
+          var t = localStorage.getItem('theme') || 'dark';
+          document.documentElement.classList.remove('light', 'dark');
+          document.documentElement.classList.add(t);
+        } catch (e) {
+          document.documentElement.classList.add('dark');
+        }
+      })();
+    </script>
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Paise Do Re (PDR) | Trust Intelligence</title>
@@ -125,7 +136,7 @@
       .risk-waterfall-red { background: repeating-linear-gradient(45deg, #fe8983, #fe8983 5px, #f7f9fb 5px, #f7f9fb 10px); }
     </style>
   </head>
-  <body class="bg-surface font-body text-on-surface selection:bg-primary-container selection:text-on-primary-container">
+  <body class="bg-surface dark:bg-slate-950 font-body text-on-surface dark:text-slate-200 selection:bg-primary-container selection:text-on-primary-container min-h-screen">
     <div id="root"></div>
     <script type="module" src="/src/main.jsx"></script>
   </body>
