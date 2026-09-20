@@ -1,6 +1,7 @@
 import React, { useState, useRef, useCallback } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
+import { Menu, X, Shield, UserCheck, ChevronRight } from 'lucide-react';
 import demoData from '../../../demo_users.json';
 import ThemeToggle from '../components/ThemeToggle';
 import StarField from '../components/StarField';
@@ -38,6 +39,7 @@ function DemoProfiles() {
   const users = demoData.demo_users;
 
   const [phase, setPhase] = useState('initial');
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [visibleCount, setVisibleCount] = useState(0);
   const [doneCount, setDoneCount] = useState(0);
   const [readyVisible, setReadyVisible] = useState(false);
@@ -90,20 +92,103 @@ function DemoProfiles() {
     <div className="bg-surface dark:bg-slate-950 text-on-surface dark:text-slate-200 min-h-screen font-body antialiased">
       <StarField />
       {/* Nav */}
-      <nav className="bg-[#f7f9fb]/80 dark:bg-slate-950/80 backdrop-blur-xl top-0 sticky z-50 shadow-sm shadow-slate-200/50 dark:shadow-none font-['Manrope'] antialiased tracking-tight">
-        <div className="max-w-7xl mx-auto px-6 py-4 flex justify-between items-center">
-          <Link to="/" className="text-xl font-bold tracking-tighter text-slate-900 dark:text-slate-50">Paise Do Re (PDR)</Link>
-          <div className="hidden md:flex items-center gap-x-8">
+      <nav className="bg-[#f7f9fb]/90 dark:bg-slate-950/90 backdrop-blur-xl top-0 sticky z-50 shadow-sm shadow-slate-200/50 dark:shadow-none font-['Manrope'] antialiased tracking-tight border-b border-slate-200/40 dark:border-slate-800/50">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 py-3.5 flex justify-between items-center w-full">
+          <Link to="/" className="text-lg sm:text-xl font-bold tracking-tighter text-slate-900 dark:text-slate-50 flex items-center gap-1.5 shrink-0">
+            <span>Paise Do Re</span>
+            <span className="text-emerald-600 dark:text-emerald-400 font-extrabold text-sm sm:text-base">(PDR)</span>
+          </Link>
+          <div className="hidden lg:flex items-center gap-x-8">
             <Link to="/" className="text-slate-500 dark:text-slate-400 font-medium hover:text-slate-900 dark:text-white dark:hover:text-white transition-all duration-300">Home</Link>
             <Link to="/solutions" className="text-slate-500 dark:text-slate-400 font-medium hover:text-slate-900 dark:text-white dark:hover:text-white transition-all duration-300">Solutions</Link>
             <span className="text-slate-900 dark:text-white font-semibold border-b-2 border-slate-900 dark:border-white pb-1">Demo Profiles</span>
+            <Link to="/user-status" className="text-slate-500 dark:text-slate-400 font-medium hover:text-slate-900 dark:text-white transition-all duration-300">Applicant Portal</Link>
+            <Link to="/manager-login" className="text-slate-500 dark:text-slate-400 font-medium hover:text-slate-900 dark:text-white transition-all duration-300">Manager Portal</Link>
           </div>
-          <div className="flex items-center gap-4">
+          <div className="hidden lg:flex items-center gap-4">
             <ThemeToggle />
             <NavUser />
-            <Link to="/solutions" className="gradient-cta text-white px-6 py-2.5 rounded-lg font-semibold active:scale-95 transition-transform duration-200">Score a Business</Link>
+            <Link to="/solutions" className="gradient-cta text-white px-5 py-2 rounded-lg font-semibold active:scale-95 transition-transform duration-200 text-sm">Score a Business</Link>
+          </div>
+
+          {/* Mobile header controls */}
+          <div className="flex lg:hidden items-center gap-2">
+            <ThemeToggle />
+            <NavUser />
+            <button
+              onClick={() => setMobileMenuOpen(prev => !prev)}
+              className="p-1.5 sm:p-2 rounded-lg text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors focus:outline-none"
+              aria-label="Toggle navigation menu"
+            >
+              {mobileMenuOpen ? <X size={20} /> : <Menu size={20} />}
+            </button>
           </div>
         </div>
+
+        {/* Mobile Dropdown */}
+        <AnimatePresence>
+          {mobileMenuOpen && (
+            <motion.div
+              initial={{ opacity: 0, height: 0 }}
+              animate={{ opacity: 1, height: 'auto' }}
+              exit={{ opacity: 0, height: 0 }}
+              transition={{ duration: 0.25, ease: 'easeInOut' }}
+              className="lg:hidden border-t border-slate-200/80 dark:border-slate-800 bg-[#f7f9fb]/98 dark:bg-slate-950/98 backdrop-blur-2xl px-4 sm:px-6 py-4 overflow-hidden shadow-2xl"
+            >
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5 mb-4">
+                <Link
+                  to="/user-status"
+                  onClick={() => setMobileMenuOpen(false)}
+                  className="p-3 rounded-xl bg-white dark:bg-slate-900 border border-emerald-500/30 shadow-sm flex items-center gap-3"
+                >
+                  <div className="w-8 h-8 rounded-lg bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 flex items-center justify-center shrink-0">
+                    <UserCheck size={18} />
+                  </div>
+                  <div>
+                    <div className="text-sm font-bold text-slate-900 dark:text-white">Applicant Login</div>
+                    <div className="text-xs text-slate-400">Check loan status</div>
+                  </div>
+                </Link>
+                <Link
+                  to="/manager-login"
+                  onClick={() => setMobileMenuOpen(false)}
+                  className="p-3 rounded-xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-sm flex items-center gap-3"
+                >
+                  <div className="w-8 h-8 rounded-lg bg-slate-800 text-emerald-400 flex items-center justify-center shrink-0">
+                    <Shield size={18} />
+                  </div>
+                  <div>
+                    <div className="text-sm font-bold text-slate-900 dark:text-white">Manager Portal</div>
+                    <div className="text-xs text-slate-400">Underwriter gateway</div>
+                  </div>
+                </Link>
+              </div>
+
+              <div className="space-y-1 mb-4 bg-white/60 dark:bg-slate-900/60 rounded-xl p-1.5 border border-slate-200/60 dark:border-slate-800/60">
+                <Link to="/" onClick={() => setMobileMenuOpen(false)} className="flex items-center justify-between px-3 py-2 text-sm font-medium text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg">
+                  <span>Home</span>
+                  <ChevronRight size={15} className="text-slate-400" />
+                </Link>
+                <Link to="/solutions" onClick={() => setMobileMenuOpen(false)} className="flex items-center justify-between px-3 py-2 text-sm font-medium text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg">
+                  <span>Solutions</span>
+                  <ChevronRight size={15} className="text-slate-400" />
+                </Link>
+                <Link to="/demo" onClick={() => setMobileMenuOpen(false)} className="flex items-center justify-between px-3 py-2 text-sm font-medium text-emerald-600 dark:text-emerald-400 bg-emerald-50/50 dark:bg-emerald-950/20 rounded-lg">
+                  <span className="font-semibold">Demo Profiles</span>
+                  <ChevronRight size={15} />
+                </Link>
+              </div>
+
+              <Link
+                to="/solutions"
+                onClick={() => setMobileMenuOpen(false)}
+                className="gradient-cta text-white w-full py-2.5 rounded-xl font-bold text-center block shadow-lg shadow-tertiary/20 text-sm active:scale-95 transition-transform"
+              >
+                Score a Business
+              </Link>
+            </motion.div>
+          )}
+        </AnimatePresence>
       </nav>
 
       <main className="max-w-7xl mx-auto px-6 pt-16 pb-24">

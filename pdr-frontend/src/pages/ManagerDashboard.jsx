@@ -109,14 +109,14 @@ export default function ManagerDashboard() {
             </div>
 
             {/* Officer status & Sign Out */}
-            <div className="hidden md:flex items-center gap-3 pl-3 border-l border-white/10">
-              <div className="flex items-center gap-2 text-xs text-slate-300">
+            <div className="flex items-center gap-2 sm:gap-3 pl-2 sm:pl-3 border-l border-white/10">
+              <div className="hidden sm:flex items-center gap-2 text-xs text-slate-300">
                 <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
                 <span className="font-medium max-w-[140px] truncate">{user?.name || user?.email || 'Senior Officer'}</span>
               </div>
               <button
                 onClick={handleLogout}
-                className="p-2 text-slate-400 hover:text-rose-400 hover:bg-white/5 rounded-lg transition-colors"
+                className="p-1.5 sm:p-2 text-slate-400 hover:text-rose-400 hover:bg-white/5 rounded-lg transition-colors"
                 title="Sign out of Manager Portal"
               >
                 <LogOut size={18} />

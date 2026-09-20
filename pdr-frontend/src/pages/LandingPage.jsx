@@ -1,12 +1,14 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { motion, useScroll, useTransform } from 'framer-motion';
+import { motion, useScroll, useTransform, AnimatePresence } from 'framer-motion';
+import { Menu, X, Shield, UserCheck, ChevronRight, ExternalLink } from 'lucide-react';
 import ThemeToggle from '../components/ThemeToggle';
 import StarField from '../components/StarField';
 import NavUser from '../components/NavUser';
 
 function LandingPage() {
   const [activeCard, setActiveCard] = useState(null);
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const toggleCard = (key) => setActiveCard(prev => prev === key ? null : key);
 
   // Returns animate target for a focused card — used on INNER motion.div only (no whileInView conflict)
@@ -24,26 +26,188 @@ function LandingPage() {
   const focusTransition = { duration: 0.4, ease: [0.4, 0, 0.2, 1] };
 
   return (
-    <div className="bg-surface dark:bg-slate-950 text-on-surface dark:text-slate-200 selection:bg-primary-container selection:text-on-primary-container relative">
+    <div className="bg-surface dark:bg-slate-950 text-on-surface dark:text-slate-200 selection:bg-primary-container selection:text-on-primary-container relative overflow-x-hidden min-h-screen">
       <div className="dark:block hidden">
         <StarField />
       </div>
       {/* Top Navigation Shell */}
-      <nav className="bg-[#f7f9fb]/80 dark:bg-slate-950/80 backdrop-blur-xl top-0 sticky z-50 shadow-sm shadow-slate-200/50 dark:shadow-none font-['Manrope'] antialiased tracking-tight">
-        <div className="max-w-7xl mx-auto px-6 py-4 flex justify-between items-center w-full">
-          <div className="text-xl font-bold tracking-tighter text-slate-900 dark:text-slate-50">Paise Do Re (PDR)</div>
-          <div className="hidden md:flex items-center gap-x-6 lg:gap-x-8">
+      <nav className="bg-[#f7f9fb]/90 dark:bg-slate-950/90 backdrop-blur-xl top-0 sticky z-50 shadow-sm shadow-slate-200/50 dark:shadow-none font-['Manrope'] antialiased tracking-tight border-b border-slate-200/40 dark:border-slate-800/50">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 py-3.5 flex justify-between items-center w-full">
+          {/* Brand Logo */}
+          <Link to="/" className="text-lg sm:text-xl font-bold tracking-tighter text-slate-900 dark:text-slate-50 flex items-center gap-1.5 shrink-0">
+            <span>Paise Do Re</span>
+            <span className="text-emerald-600 dark:text-emerald-400 font-extrabold text-sm sm:text-base">(PDR)</span>
+          </Link>
+
+          {/* Desktop Nav Links */}
+          <div className="hidden lg:flex items-center gap-x-6 xl:gap-x-8">
             <a className="text-slate-900 dark:text-white font-semibold border-b-2 border-slate-900 dark:border-slate-50 pb-1 hover:text-slate-900 dark:text-white dark:hover:text-white transition-all duration-300" href="#problem-statement">About Us</a>
             <Link to="/solutions" className="text-slate-500 dark:text-slate-400 font-medium hover:text-slate-900 dark:text-white dark:hover:text-white transition-all duration-300">Solutions</Link>
+            <Link to="/demo" className="text-slate-500 dark:text-slate-400 font-medium hover:text-slate-900 dark:text-white dark:hover:text-white transition-all duration-300">Demo Profiles</Link>
             <a className="text-slate-500 dark:text-slate-400 font-medium hover:text-slate-900 dark:text-white dark:hover:text-white transition-all duration-300" href="https://github.com/sumitsinha09-stack/PDR-publishing" target="_blank" rel="noopener noreferrer">Documentation</a>
           </div>
-          <div className="flex items-center gap-3">
+
+          {/* Desktop Right CTAs */}
+          <div className="hidden lg:flex items-center gap-3 shrink-0">
             <ThemeToggle />
-            <Link to="/user-status" className="text-sm font-semibold text-slate-700 dark:text-slate-300 hover:text-primary transition-colors border border-slate-200 dark:border-slate-700 px-4 py-2 rounded-lg hidden lg:block">Applicant Login</Link>
-            <Link to="/manager-login" className="text-sm font-semibold text-white bg-slate-800 dark:bg-slate-700 hover:bg-slate-700 dark:hover:bg-slate-600 shadow-md transition-colors px-4 py-2 rounded-lg">Manager Portal</Link>
-            <Link to="/solutions" className="gradient-cta text-white px-5 py-2 rounded-lg font-semibold active:scale-95 transition-transform duration-200">Request Demo</Link>
+            <Link 
+              to="/user-status" 
+              className="text-sm font-semibold text-slate-700 dark:text-slate-300 hover:text-emerald-600 dark:hover:text-emerald-400 hover:border-emerald-500/50 transition-all border border-slate-200 dark:border-slate-700 px-3.5 py-2 rounded-lg flex items-center gap-1.5"
+            >
+              <UserCheck size={16} className="text-emerald-500" />
+              Applicant Login
+            </Link>
+            <Link 
+              to="/manager-login" 
+              className="text-sm font-semibold text-white bg-slate-800 dark:bg-slate-700 hover:bg-slate-700 dark:hover:bg-slate-600 shadow-md transition-all px-3.5 py-2 rounded-lg flex items-center gap-1.5"
+            >
+              <Shield size={16} className="text-emerald-400" />
+              Manager Portal
+            </Link>
+            <Link 
+              to="/solutions" 
+              className="gradient-cta text-white px-4 py-2 rounded-lg font-semibold active:scale-95 transition-transform duration-200 text-sm"
+            >
+              Request Demo
+            </Link>
+          </div>
+
+          {/* Mobile Right Controls (< lg) */}
+          <div className="flex lg:hidden items-center gap-1.5 sm:gap-2">
+            <ThemeToggle />
+            {/* Quick direct mobile portal buttons so BOTH are accessible immediately on mobile */}
+            <Link
+              to="/user-status"
+              className="text-xs font-semibold text-slate-700 dark:text-slate-200 bg-white dark:bg-slate-800/90 border border-slate-200 dark:border-slate-700 px-2 sm:px-2.5 py-1.5 rounded-lg flex items-center gap-1 transition-all active:scale-95 shadow-sm"
+              title="Applicant Status & Login"
+            >
+              <UserCheck size={14} className="text-emerald-500" />
+              <span>Applicant</span>
+            </Link>
+            <Link
+              to="/manager-login"
+              className="text-xs font-semibold text-white bg-slate-800 dark:bg-slate-700 hover:bg-slate-700 px-2 sm:px-2.5 py-1.5 rounded-lg flex items-center gap-1 shadow-sm transition-all active:scale-95"
+              title="Manager Portal"
+            >
+              <Shield size={14} className="text-emerald-400" />
+              <span>Manager</span>
+            </Link>
+            {/* Hamburger menu button */}
+            <button
+              onClick={() => setMobileMenuOpen(prev => !prev)}
+              className="p-1.5 sm:p-2 rounded-lg text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors focus:outline-none"
+              aria-label="Toggle navigation menu"
+              aria-expanded={mobileMenuOpen}
+            >
+              {mobileMenuOpen ? <X size={20} /> : <Menu size={20} />}
+            </button>
           </div>
         </div>
+
+        {/* Mobile Navigation Drawer / Dropdown */}
+        <AnimatePresence>
+          {mobileMenuOpen && (
+            <motion.div
+              initial={{ opacity: 0, height: 0 }}
+              animate={{ opacity: 1, height: 'auto' }}
+              exit={{ opacity: 0, height: 0 }}
+              transition={{ duration: 0.25, ease: 'easeInOut' }}
+              className="lg:hidden border-t border-slate-200/80 dark:border-slate-800 bg-[#f7f9fb]/98 dark:bg-slate-950/98 backdrop-blur-2xl px-4 sm:px-6 py-4 overflow-hidden shadow-2xl"
+            >
+              {/* Dual Portals Highlight Cards */}
+              <div className="text-[11px] font-bold uppercase tracking-wider text-slate-400 dark:text-slate-500 mb-2 px-1">
+                Access Portals
+              </div>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5 mb-4">
+                <Link
+                  to="/user-status"
+                  onClick={() => setMobileMenuOpen(false)}
+                  className="p-3 rounded-xl bg-white dark:bg-slate-900 border border-emerald-500/30 hover:border-emerald-500 shadow-sm flex items-start gap-3 transition-all active:scale-98"
+                >
+                  <div className="w-8 h-8 rounded-lg bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 flex items-center justify-center shrink-0">
+                    <UserCheck size={18} />
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <div className="flex items-center justify-between">
+                      <span className="text-sm font-bold text-slate-900 dark:text-white">Applicant Login</span>
+                      <span className="text-[10px] uppercase font-bold tracking-wider px-1.5 py-0.5 rounded bg-emerald-100 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-300">Status</span>
+                    </div>
+                    <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5 leading-snug">Track application & AI credit decision</p>
+                  </div>
+                </Link>
+
+                <Link
+                  to="/manager-login"
+                  onClick={() => setMobileMenuOpen(false)}
+                  className="p-3 rounded-xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 hover:border-slate-400 shadow-sm flex items-start gap-3 transition-all active:scale-98"
+                >
+                  <div className="w-8 h-8 rounded-lg bg-slate-800 text-emerald-400 flex items-center justify-center shrink-0">
+                    <Shield size={18} />
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <div className="flex items-center justify-between">
+                      <span className="text-sm font-bold text-slate-900 dark:text-white">Manager Portal</span>
+                      <span className="text-[10px] uppercase font-bold tracking-wider px-1.5 py-0.5 rounded bg-slate-200 dark:bg-slate-800 text-slate-700 dark:text-slate-300">Underwriters</span>
+                    </div>
+                    <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5 leading-snug">Review loan queue & risk telemetry</p>
+                  </div>
+                </Link>
+              </div>
+
+              {/* Navigation Links */}
+              <div className="text-[11px] font-bold uppercase tracking-wider text-slate-400 dark:text-slate-500 mb-2 px-1">
+                Explore Platform
+              </div>
+              <div className="space-y-1 mb-4 bg-white/60 dark:bg-slate-900/60 rounded-xl p-1.5 border border-slate-200/60 dark:border-slate-800/60">
+                <a
+                  href="#problem-statement"
+                  onClick={() => setMobileMenuOpen(false)}
+                  className="flex items-center justify-between px-3 py-2 rounded-lg text-sm font-medium text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"
+                >
+                  <span>About Us</span>
+                  <ChevronRight size={15} className="text-slate-400" />
+                </a>
+                <Link
+                  to="/solutions"
+                  onClick={() => setMobileMenuOpen(false)}
+                  className="flex items-center justify-between px-3 py-2 rounded-lg text-sm font-medium text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"
+                >
+                  <span>Solutions</span>
+                  <ChevronRight size={15} className="text-slate-400" />
+                </Link>
+                <Link
+                  to="/demo"
+                  onClick={() => setMobileMenuOpen(false)}
+                  className="flex items-center justify-between px-3 py-2 rounded-lg text-sm font-medium text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"
+                >
+                  <span>Demo Profiles & Scoring</span>
+                  <ChevronRight size={15} className="text-slate-400" />
+                </Link>
+                <a
+                  href="https://github.com/sumitsinha09-stack/PDR-publishing"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex items-center justify-between px-3 py-2 rounded-lg text-sm font-medium text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"
+                >
+                  <span className="flex items-center gap-1.5">
+                    Documentation
+                    <ExternalLink size={12} className="text-slate-400" />
+                  </span>
+                  <ChevronRight size={15} className="text-slate-400" />
+                </a>
+              </div>
+
+              {/* Bottom Request Demo Action */}
+              <Link
+                to="/solutions"
+                onClick={() => setMobileMenuOpen(false)}
+                className="gradient-cta text-white w-full py-2.5 rounded-xl font-bold text-center block shadow-lg shadow-tertiary/20 text-sm active:scale-95 transition-transform"
+              >
+                Request Demo / Assess Risk
+              </Link>
+            </motion.div>
+          )}
+        </AnimatePresence>
       </nav>
 
       <main className="relative z-10">
@@ -182,7 +346,7 @@ function LandingPage() {
             </motion.div>
 
             {/* Impact Grid — outer div handles entry, inner motion.div handles focus */}
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-8 text-left items-stretch">
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 lg:gap-8 text-left items-stretch">
               {[
                 { icon: 'groups', val: '450 Million', label: 'Credit-Invisible Individuals', desc: 'A population larger than the United States, ignored by legacy scoring.', highlight: false },
                 { icon: 'storefront', val: '63 Million', label: 'Excluded MSMEs', desc: 'Small businesses fueling 30% of GDP, yet starved of working capital.', highlight: false },

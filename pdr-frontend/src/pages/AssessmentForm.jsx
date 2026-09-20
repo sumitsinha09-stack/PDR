@@ -643,20 +643,23 @@ function AssessmentForm() {
         >
       <StarField />
       {/* TopAppBar Shell Component */}
-      <nav className="bg-slate-50/80 dark:bg-slate-950/80 backdrop-blur-xl fixed top-0 w-full z-50 shadow-lg shadow-slate-400/40 dark:shadow-none font-headline antialiased tracking-tight">
-        <div className="max-w-7xl mx-auto px-6 py-4 flex justify-between items-center w-full">
-          <Link to="/" className="text-xl font-bold tracking-tighter text-slate-900 dark:text-white">Paise Do Re (PDR)</Link>
-          <div className="hidden md:flex items-center gap-x-8">
+      <nav className="bg-slate-50/90 dark:bg-slate-950/90 backdrop-blur-xl fixed top-0 w-full z-50 shadow-lg shadow-slate-400/40 dark:shadow-none font-headline antialiased tracking-tight border-b border-slate-200/40 dark:border-slate-800/50">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 py-3.5 flex justify-between items-center w-full">
+          <Link to="/" className="text-lg sm:text-xl font-bold tracking-tighter text-slate-900 dark:text-white flex items-center gap-1.5 shrink-0">
+            <span>Paise Do Re</span>
+            <span className="text-emerald-600 dark:text-emerald-400 font-extrabold text-sm sm:text-base">(PDR)</span>
+          </Link>
+          <div className="hidden lg:flex items-center gap-x-8">
             <Link to="/#problem-statement" className="text-slate-500 dark:text-slate-400 font-medium hover:text-slate-900 dark:text-white dark:hover:text-white transition-all duration-300">About Us</Link>
             <a className="text-slate-900 dark:text-white font-semibold border-b-2 border-slate-900 dark:border-white pb-1 hover:text-slate-900 dark:text-white dark:hover:text-white transition-all duration-300" href="#">Solutions</a>
-            <a className="text-slate-500 dark:text-slate-400 font-medium hover:text-slate-900 dark:text-white dark:hover:text-white transition-all duration-300" href="#">Trust Pipeline</a>
-            <a className="text-slate-500 dark:text-slate-400 font-medium hover:text-slate-900 dark:text-white dark:hover:text-white transition-all duration-300" href="#">Compliance</a>
+            <Link to="/user-status" className="text-slate-500 dark:text-slate-400 font-medium hover:text-slate-900 dark:text-white transition-all duration-300">Applicant Portal</Link>
+            <Link to="/manager-login" className="text-slate-500 dark:text-slate-400 font-medium hover:text-slate-900 dark:text-white transition-all duration-300">Manager Portal</Link>
             <a className="text-slate-500 dark:text-slate-400 font-medium hover:text-slate-900 dark:text-white dark:hover:text-white transition-all duration-300" href="https://github.com/sumitsinha09-stack/PDR-publishing" target="_blank" rel="noopener noreferrer">Documentation</a>
           </div>
-          <div className="flex items-center gap-4">
+          <div className="flex items-center gap-2 sm:gap-4">
             <ThemeToggle />
             <NavUser />
-            <button className="text-white px-6 py-2.5 rounded-full font-semibold active:scale-95 transition-transform duration-200 text-sm bg-[#00662A]">Request Demo</button>
+            <Link to="/solutions" className="hidden sm:inline-block text-white px-5 py-2 rounded-lg font-semibold active:scale-95 transition-transform duration-200 text-sm bg-[#00662A]">Request Demo</Link>
           </div>
         </div>
       </nav>
