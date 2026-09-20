@@ -253,7 +253,7 @@ export default function Results({ result, error, onBack, transactions, selectedU
     };
 
     // Grade E — rejection. Use persona/model to pick the right story.
-    if (grade === 'E' || result.outcome === 'REJECTED') {
+    if (grade === 'E' || result?.outcome === 'REJECTED') {
       // MSME wash trader
       if (!isNTC || profile?.persona?.toLowerCase().includes('wash') || profile?.persona?.toLowerCase().includes('fraud')) {
         if (!isNTC) return {
@@ -287,7 +287,7 @@ export default function Results({ result, error, onBack, transactions, selectedU
     };
   };
 
-  const verdict = buildVerdict();
+  const verdict = result ? buildVerdict() : { headline: '', para: '' };
 
   // ── Chart refs ──────────────────────────────────────────────
   const timelineChartRef = useRef(null);
