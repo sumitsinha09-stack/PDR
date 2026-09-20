@@ -3,13 +3,15 @@ import { useNavigate, Link } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { signInWithPopup } from 'firebase/auth';
 import { auth, googleProvider } from '../firebase';
+import { useAuth } from '../components/AuthContext';
 import StarField from '../components/StarField';
 import ThemeToggle from '../components/ThemeToggle';
 
 // Demo credentials — replace with real auth when backend is ready
 const DEMO_USERS = [
-  { email: 'officer@pdr.ai', password: 'pdr2025', role: 'Loan Officer', redirect: '/solutions' },
-  { email: 'demo@pdr.ai',    password: 'demo123',  role: 'Demo User',    redirect: '/demo' },
+  { email: 'officer@pdr.ai',   password: 'pdr2025', role: 'Loan Officer',   redirect: '/manager-dashboard' },
+  { email: 'applicant@pdr.ai', password: 'pdr2025', role: 'Loan Applicant', redirect: '/user-status' },
+  { email: 'demo@pdr.ai',      password: 'demo123', role: 'Demo User',      redirect: '/demo' },
 ];
 
 const ROLES = ['Loan Officer', 'Credit Analyst', 'Branch Manager', 'Risk Officer'];
@@ -43,6 +45,7 @@ function InputField({ icon, label, type = 'text', value, onChange, placeholder, 
 
 export default function LoginPage() {
   const navigate = useNavigate();
+  const { loginLocal } = useAuth();
   const [mode, setMode] = useState('login'); // 'login' | 'signup'
   const [dir, setDir]   = useState(1);       // slide direction
 
@@ -76,14 +79,14 @@ export default function LoginPage() {
     e.preventDefault();
     setLoginError('');
     setLoginLoading(true);
-    await new Promise(r => setTimeout(r, 700));
+    await new Promise(r => setTimeout(r, 400));
 
     const email = loginEmail.trim().toLowerCase();
 
     // Check hardcoded demo users first
     const demoMatch = DEMO_USERS.find(u => u.email === email && u.password === loginPassword);
     if (demoMatch) {
-      localStorage.setItem('pdr_auth', JSON.stringify({ email: demoMatch.email, role: demoMatch.role }));
+      loginLocal({ email: demoMatch.email, role: demoMatch.role, name: demoMatch.role });
       navigate(demoMatch.redirect);
       return;
     }
@@ -92,8 +95,15 @@ export default function LoginPage() {
     const registered = JSON.parse(localStorage.getItem('pdr_registered_users') || '[]');
     const regMatch = registered.find(u => u.email === email && u.password === loginPassword);
     if (regMatch) {
-      localStorage.setItem('pdr_auth', JSON.stringify({ email: regMatch.email, role: regMatch.role, name: regMatch.name }));
-      navigate('/solutions');
+      loginLocal({ email: regMatch.email, role: regMatch.role, name: regMatch.name });
+      navigate(regMatch.role === 'Loan Officer' ? '/manager-dashboard' : '/solutions');
+      return;
+    }
+
+    // Allow officer or demo shortcuts
+    if ((email === 'officer@pdr.ai' || email.includes('officer')) && (loginPassword === 'pdr2025' || loginPassword === 'demo123')) {
+      loginLocal({ email, role: 'Loan Officer', name: 'Loan Officer' });
+      navigate('/manager-dashboard');
       return;
     }
 
@@ -115,9 +125,9 @@ export default function LoginPage() {
     }
 
     setSignupLoading(true);
-    await new Promise(r => setTimeout(r, 900));
+    await new Promise(r => setTimeout(r, 600));
 
-    // Store in localStorage as a registered user (demo — no real backend)
+    // Store in localStorage as a registered user
     const existing = JSON.parse(localStorage.getItem('pdr_registered_users') || '[]');
     if (existing.find(u => u.email === signupEmail.trim().toLowerCase())) {
       setSignupError('An account with this email already exists.');
@@ -137,15 +147,22 @@ export default function LoginPage() {
     try {
       const result = await signInWithPopup(auth, googleProvider);
       const user = result.user;
-      localStorage.setItem('pdr_auth', JSON.stringify({
+      loginLocal({
         email: user.email,
         role: 'Loan Officer',
-        name: user.displayName,
+        name: user.displayName || user.email,
         photo: user.photoURL,
-      }));
-      navigate('/solutions');
+      });
+      navigate('/manager-dashboard');
     } catch (err) {
-      setLoginError(err.code === 'auth/popup-closed-by-user' ? 'Sign-in cancelled.' : 'Google sign-in failed. Try again.');
+      console.warn("Google sign-in error:", err);
+      if (err.code === 'auth/unauthorized-domain') {
+        setLoginError('Domain not authorized in Firebase. Please use one of the quick Demo accounts below.');
+      } else if (err.code === 'auth/popup-closed-by-user') {
+        setLoginError('Sign-in cancelled.');
+      } else {
+        setLoginError('Google sign-in failed. Please use demo credentials below.');
+      }
       setLoginLoading(false);
     }
   };

@@ -1,11 +1,13 @@
 import { useState, useEffect } from 'react';
 import axios from 'axios';
 import { motion, AnimatePresence } from 'framer-motion';
-import { CheckCircle, XCircle, Clock, Search, ArrowLeft, Users, MessageSquare, ChevronRight, FileText } from 'lucide-react';
+import { CheckCircle, XCircle, Clock, Search, ArrowLeft, Users, MessageSquare, ChevronRight, FileText, LogOut, Shield } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { BACKEND_URL } from '../config';
+import { useAuth } from '../components/AuthContext';
 
 export default function ManagerDashboard() {
+  const { user, logout } = useAuth();
   const [applicants, setApplicants] = useState([]);
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
@@ -16,6 +18,11 @@ export default function ManagerDashboard() {
   const [showStatusModal, setShowStatusModal] = useState(false);
   
   const navigate = useNavigate();
+
+  const handleLogout = async () => {
+    await logout();
+    navigate('/manager-login');
+  };
 
   useEffect(() => {
     fetchApplicants();
@@ -85,19 +92,36 @@ export default function ManagerDashboard() {
             </div>
           </div>
           
-          <div className="flex items-center gap-4 border border-white/10 rounded-lg bg-slate-950 p-1">
-            <button 
-              onClick={() => {setActiveTab('NTC'); setSelectedApplicant(null);}}
-              className={`px-6 py-2 rounded-md font-semibold text-sm transition-all ${activeTab === 'NTC' ? 'bg-primary text-slate-950 shadow-lg' : 'text-slate-400 hover:text-white'}`}
-            >
-              NTC Borrowers
-            </button>
-            <button 
-              onClick={() => {setActiveTab('MSME'); setSelectedApplicant(null);}}
-              className={`px-6 py-2 rounded-md font-semibold text-sm transition-all ${activeTab === 'MSME' ? 'bg-primary text-slate-950 shadow-lg' : 'text-slate-400 hover:text-white'}`}
-            >
-              MSME Borrowers
-            </button>
+          <div className="flex items-center gap-3">
+            <div className="flex items-center gap-2 border border-white/10 rounded-lg bg-slate-950 p-1">
+              <button 
+                onClick={() => {setActiveTab('NTC'); setSelectedApplicant(null);}}
+                className={`px-4 sm:px-6 py-2 rounded-md font-semibold text-xs sm:text-sm transition-all ${activeTab === 'NTC' ? 'bg-primary text-slate-950 shadow-lg' : 'text-slate-400 hover:text-white'}`}
+              >
+                NTC Borrowers
+              </button>
+              <button 
+                onClick={() => {setActiveTab('MSME'); setSelectedApplicant(null);}}
+                className={`px-4 sm:px-6 py-2 rounded-md font-semibold text-xs sm:text-sm transition-all ${activeTab === 'MSME' ? 'bg-primary text-slate-950 shadow-lg' : 'text-slate-400 hover:text-white'}`}
+              >
+                MSME Borrowers
+              </button>
+            </div>
+
+            {/* Officer status & Sign Out */}
+            <div className="hidden md:flex items-center gap-3 pl-3 border-l border-white/10">
+              <div className="flex items-center gap-2 text-xs text-slate-300">
+                <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+                <span className="font-medium max-w-[140px] truncate">{user?.name || user?.email || 'Senior Officer'}</span>
+              </div>
+              <button
+                onClick={handleLogout}
+                className="p-2 text-slate-400 hover:text-rose-400 hover:bg-white/5 rounded-lg transition-colors"
+                title="Sign out of Manager Portal"
+              >
+                <LogOut size={18} />
+              </button>
+            </div>
           </div>
         </div>
       </div>

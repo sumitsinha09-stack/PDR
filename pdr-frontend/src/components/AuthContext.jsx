@@ -36,14 +36,23 @@ export function AuthProvider({ children }) {
     return unsub;
   }, []);
 
+  const loginLocal = (userData) => {
+    localStorage.setItem('pdr_auth', JSON.stringify(userData));
+    setUser({ ...userData, provider: 'local' });
+  };
+
   const logout = async () => {
-    await signOut(auth);
+    try {
+      await signOut(auth);
+    } catch (e) {
+      console.warn("Signout error:", e);
+    }
     localStorage.removeItem('pdr_auth');
     setUser(null);
   };
 
   return (
-    <AuthContext.Provider value={{ user, logout }}>
+    <AuthContext.Provider value={{ user, loginLocal, logout }}>
       {children}
     </AuthContext.Provider>
   );
