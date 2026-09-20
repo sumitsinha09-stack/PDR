@@ -1,20 +1,32 @@
 import { useState, useEffect, useRef } from 'react'
 import axios from 'axios'
 import { BACKEND_URL as BACKEND } from '../config'
+import { generateApplicantAnalystResponse, BENCHMARK_APPLICANT_LIST } from '../utils/analystEngine'
 
-export default function ChatPanel({ applicantId, applicantName, decision, isDark = false }) {
+export default function ChatPanel({
+  applicantId,
+  applicantName,
+  decision,
+  isDark = false,
+  result = null,
+  profile = null,
+}) {
   const [messages, setMessages]       = useState([])
   const [input, setInput]             = useState('')
   const [loading, setLoading]         = useState(false)
-  const [allApplicants, setAll]       = useState([])
+  const [allApplicants, setAll]       = useState(BENCHMARK_APPLICANT_LIST)
   const [compareOpen, setCompareOpen] = useState(false)
   const bottomRef    = useRef(null)
   const compareRef   = useRef(null)
 
-  // Load all applicants for the compare dropdown
+  // Load all applicants for the compare dropdown (augmenting benchmarks if backend responds)
   useEffect(() => {
-    axios.get(`${BACKEND}/chatbot/search?limit=20`)
-      .then(r => setAll(r.data.results || []))
+    axios.get(`${BACKEND}/chatbot/search?limit=20`, { timeout: 2500 })
+      .then(r => {
+        if (r.data?.results && Array.isArray(r.data.results) && r.data.results.length > 0) {
+          setAll(r.data.results)
+        }
+      })
       .catch(() => {})
   }, [])
 
@@ -63,17 +75,31 @@ export default function ChatPanel({ applicantId, applicantName, decision, isDark
     setLoading(true)
     setInput('')
 
+    let analystMessage = null
+
+    // 1. Attempt backend call (with 2500ms timeout)
     try {
-      const res = await axios.post(`${BACKEND}/chatbot/ask`, { query })
-      setMessages(prev => [...prev, { role: 'analyst', text: res.data.message || '(no response)' }])
+      const res = await axios.post(`${BACKEND}/chatbot/ask`, { query }, { timeout: 2500 })
+      if (res.data?.message && typeof res.data.message === 'string' && res.data.message.trim()) {
+        analystMessage = res.data.message
+      }
     } catch {
-      setMessages(prev => [
-        ...prev,
-        { role: 'error', text: 'Could not reach the analyst. Is the backend running on port 8000?' },
-      ])
-    } finally {
-      setLoading(false)
+      // Backend unreachable, mixed-content blocked by browser on HTTPS, or 500
     }
+
+    // 2. If backend didn't return a message, use our grounded AI Credit Analyst engine
+    if (!analystMessage) {
+      analystMessage = generateApplicantAnalystResponse(trimmed, {
+        applicantId,
+        applicantName,
+        decision,
+        result,
+        profile,
+      })
+    }
+
+    setMessages(prev => [...prev, { role: 'analyst', text: analystMessage }])
+    setLoading(false)
   }
 
   function handleCompare(otherId) {

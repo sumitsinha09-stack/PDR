@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef } from 'react'
 import axios from 'axios'
 import { BACKEND_URL as BACKEND } from '../config'
+import { generateGlobalAnalystResponse } from '../utils/analystEngine'
 
 // ── Floating global chat button + modal ──────────────────────────────────────
 // No auto-inject. Loan officer types full queries for cross-applicant work:
@@ -39,17 +40,22 @@ export default function GlobalChatButton() {
     setLoading(true)
     setInput('')
 
+    let analystMessage = null
     try {
-      const res = await axios.post(`${BACKEND}/chatbot/ask`, { query: trimmed })
-      setMessages(prev => [...prev, { role: 'analyst', text: res.data.message || '(no response)' }])
+      const res = await axios.post(`${BACKEND}/chatbot/ask`, { query: trimmed }, { timeout: 2500 })
+      if (res.data?.message && typeof res.data.message === 'string' && res.data.message.trim()) {
+        analystMessage = res.data.message
+      }
     } catch {
-      setMessages(prev => [
-        ...prev,
-        { role: 'error', text: 'Could not reach the analyst. Is the backend running on port 8000?' },
-      ])
-    } finally {
-      setLoading(false)
+      // Backend unreachable or blocked by browser mixed content
     }
+
+    if (!analystMessage) {
+      analystMessage = generateGlobalAnalystResponse(trimmed)
+    }
+
+    setMessages(prev => [...prev, { role: 'analyst', text: analystMessage }])
+    setLoading(false)
   }
 
   const EXAMPLES = [

@@ -746,6 +746,8 @@ export default function Results({ result, error, onBack, transactions, selectedU
           applicantName={profile?.name || result?.user_id || 'Applicant'}
           decision={result?.outcome || ''}
           isDark={isDark}
+          result={result}
+          profile={profile}
         />
 
         <div style={{ height: 100 }} />
