@@ -234,7 +234,7 @@ export default function ManagerDashboard() {
             </div>
 
             {/* Officer Action Area */}
-            <div className="mt-12 bg-surface border border-white/10 p-8 rounded-3xl shadow-2xl relative overflow-hidden">
+            <div className="mt-12 bg-slate-900 border border-white/10 p-8 rounded-3xl shadow-2xl relative overflow-hidden">
               <div className="absolute top-0 right-0 w-32 h-32 bg-primary/5 blur-[80px] rounded-full"></div>
               
               <h3 className="text-xl font-bold mb-6 font-headline text-white">Manager Review</h3>
